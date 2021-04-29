@@ -13,15 +13,15 @@ import java.util.List;
 
 public class FeedbackDAO {
 
-    private static final String CREATE_FEEDBACK = "INSERT INTO feed_back (description, date_of_fb) VALUES (?, ?)";
+    private static final String CREATE_FEEDBACK = "INSERT INTO feed_back (description, date_of_fb) VALUES (?, ?) RETURNING feed_back_id";
 
-    private static final String DELETE_FEEDBACK = "DELETE FROM feed_back WHERE feed_back_id = ?";
+    private static final String DELETE_FEEDBACK = "DELETE FROM feed_back WHERE feed_back_id = ? RETURNING feed_back_id";
 
     private static final String GET_ALL_FEEDBACK = "SELECT * FROM feed_back";
 
     private static final String GET_FEEDBACK_BY_ID = "SELECT * FROM feed_back AS fb WHERE fb.feed_back_id = ?";
 
-    private static final String UPDATE_FEEDBACK = "UPDATE feed_back AS fb SET description = ?, date_of_fb = ? WHERE fb.feed_back_id = ? ";
+    private static final String UPDATE_FEEDBACK = "UPDATE feed_back AS fb SET description = ?, date_of_fb = ? WHERE fb.feed_back_id = ? RETURNING feed_back_id";
 
     @Setter
     private ConnectionBuilder connectionBuilder;
@@ -45,21 +45,16 @@ public class FeedbackDAO {
         return result;
     }
 
-    public int deleteById(int feedbackId) {
-        int result = 0;
+    public void deleteById(int feedbackId) {
 
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_FEEDBACK);
-
             statement.setInt(1, feedbackId);
-
-            result = statement.executeUpdate();
+            statement.executeQuery();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return result;
     }
 
     public List<Feedback> getAllFeedback() {
@@ -71,14 +66,12 @@ public class FeedbackDAO {
             ResultSet rs = statement.executeQuery();
 
             while (rs.next()) {
-
                 Feedback feedback = new Feedback();
                 feedback.setFeedId(rs.getInt("feed_back_id"));
                 feedback.setDescription(rs.getString("description"));
                 feedback.setDate(rs.getDate("date_of_fb").toLocalDate());
 
                 feedbacks.add(feedback);
-
             }
         }catch (SQLException e) {
             e.printStackTrace();
@@ -87,7 +80,7 @@ public class FeedbackDAO {
         return feedbacks;
     }
 
-    public Feedback getFeedbacktById(int feedbackId) {
+    public Feedback getFeedbackById(int feedbackId) {
         Feedback feedback = null;
 
         try(Connection connection = getConnection()) {
@@ -95,9 +88,12 @@ public class FeedbackDAO {
             statement.setInt(1, feedbackId);
             ResultSet rs = statement.executeQuery();
 
-            feedback.setFeedId(rs.getInt("feed_back_id"));
-            feedback.setDescription(rs.getString("description"));
-            feedback.setDate(rs.getDate("date_of_fb").toLocalDate());
+            while (rs.next()) {
+                feedback = new Feedback();
+                feedback.setFeedId(rs.getInt("feed_back_id"));
+                feedback.setDescription(rs.getString("description"));
+                feedback.setDate(rs.getDate("date_of_fb").toLocalDate());
+            }
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -106,22 +102,20 @@ public class FeedbackDAO {
         return feedback;
     }
 
-    public int updateFeedback(Feedback feedback) {
-        int result = 0;
+    public void updateFeedback(Feedback feedback) {
 
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_FEEDBACK);
 
             statement.setString(1, feedback.getDescription());
             statement.setDate(2, Date.valueOf(feedback.getDate()));
-
-            result = statement.executeUpdate();
+            statement.setInt(3, feedback.getFeedId());
+            ResultSet rs = statement.executeQuery();
+            rs.next();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return result;
     }
 
 
