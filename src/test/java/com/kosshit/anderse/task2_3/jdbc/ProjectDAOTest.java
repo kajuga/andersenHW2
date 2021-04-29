@@ -6,6 +6,7 @@ import com.kosshit.anderse.task2_3.model.Project;
 import com.kosshit.anderse.task2_3.model.Team;
 import junit.framework.TestCase;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,6 +51,8 @@ public class ProjectDAOTest extends TestCase {
     @Test
     public void testCreateProject() {
         boolean fact = dao.createProject(project);
+
+        Assert.assertTrue(fact);
         log.info("expected value true, actual value - {}", fact);
     }
 
@@ -58,7 +61,7 @@ public class ProjectDAOTest extends TestCase {
         dao.deleteById(3);
         Project fact  = dao.getProjectById(3);
 
-
+        Assert.assertEquals(null, fact);
         log.info("expected value null, actual value - {}", fact);
     }
 
@@ -66,6 +69,8 @@ public class ProjectDAOTest extends TestCase {
     public void testGetProjectById() {
         Project p = dao.getProjectById(2);
         String fact = p.getCustomer();
+
+        Assert.assertEquals("RFS", fact);
         log.info("expected value RFS, actual value - {}", fact );
     }
 
@@ -76,6 +81,7 @@ public class ProjectDAOTest extends TestCase {
         Project e = dao.getProjectById(1);
         String fact = e.getDuration();
 
+        Assert.assertEquals("...", fact);
         log.info("expected value '...', actual value - {}", fact );
     }
 
@@ -85,6 +91,7 @@ public class ProjectDAOTest extends TestCase {
 
         int fact = list.size();
 
+        Assert.assertEquals(2, fact);
         log.info("expected value '2', actual value - {}", fact );
     }
 }

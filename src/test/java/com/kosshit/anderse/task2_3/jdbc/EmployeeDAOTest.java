@@ -6,6 +6,7 @@ import com.kosshit.anderse.task2_3.model.EmployerLevel;
 import com.kosshit.anderse.task2_3.model.EnglishLevel;
 import com.kosshit.anderse.task2_3.model.Team;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -54,6 +55,8 @@ public class EmployeeDAOTest {
     public void testCreateEmployeeTest() {
 
         boolean fact = dao.createEmployee(employee);
+
+        Assert.assertTrue(fact);
         log.info("expected value true, actual value - {}", fact);
     }
 
@@ -62,7 +65,7 @@ public class EmployeeDAOTest {
         dao.deleteById(3);
         Employee fact  = dao.getEmployeeById(3);
 
-
+        Assert.assertEquals(null, fact);
         log.info("expected value null, actual value - {}", fact);
     }
 
@@ -73,6 +76,7 @@ public class EmployeeDAOTest {
         Employee e = dao.getEmployeeById(4);
         String fact = e.getFirstName();
 
+        Assert.assertEquals("Ivan", fact);
         log.info("expected value Ivan, actual value - {}", fact );
     }
 
@@ -81,6 +85,8 @@ public class EmployeeDAOTest {
     public void testGetEmployeeByIdTest() {
        Employee e = dao.getEmployeeById(7);
        String fact = e.getLastName();
+
+       Assert.assertEquals("Crosby", fact);
        log.info("expected value 'Crosby', actual value - {}", fact );
     }
 }

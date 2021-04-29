@@ -5,6 +5,7 @@ import com.kosshit.anderse.task2_3.model.Employee;
 import com.kosshit.anderse.task2_3.model.Project;
 import com.kosshit.anderse.task2_3.model.Team;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -47,6 +48,8 @@ public class TeamDAOTest {
     @Test
     public void testCreateTeam() {
         boolean fact = dao.createTeam(team);
+
+        Assert.assertTrue(fact);
         log.info("expected value true, actual value - {}", fact);
     }
 
@@ -55,7 +58,7 @@ public class TeamDAOTest {
         dao.deleteById(3);
         Team fact  = dao.getTeamById(3);
 
-
+        Assert.assertEquals(null, fact);
         log.info("expected value null, actual value - {}", fact);
     }
 
@@ -63,6 +66,8 @@ public class TeamDAOTest {
     public void testGetTeamById() {
         Team t = dao.getTeamById(1);
         String fact = t.getTeamName();
+
+        Assert.assertEquals("Shitikhin", fact);
         log.info("expected value Shitikhin, actual value - {}", fact );
     }
 
@@ -72,6 +77,7 @@ public class TeamDAOTest {
 
         int fact = list.size();
 
+        Assert.assertEquals(2, fact);
         log.info("expected value '2', actual value - {}", fact );
     }
 
@@ -82,6 +88,7 @@ public class TeamDAOTest {
         Team t = dao.getTeamById(2);
         String fact = t.getTeamName();
 
+        Assert.assertEquals("Basket", fact);
         log.info("expected value 'Basket', actual value - {}", fact );
     }
 }

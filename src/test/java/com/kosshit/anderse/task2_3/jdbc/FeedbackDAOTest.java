@@ -5,6 +5,7 @@ import com.kosshit.anderse.task2_3.model.Employee;
 import com.kosshit.anderse.task2_3.model.Feedback;
 import com.kosshit.anderse.task2_3.model.Team;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,6 +42,8 @@ public class FeedbackDAOTest {
     @Test
     public void testCreateFeedback() {
         boolean fact = dao.createFeedback(feedback);
+
+        Assert.assertTrue(fact);
         log.info("expected value true, actual value - {}", fact);
     }
 
@@ -49,7 +52,7 @@ public class FeedbackDAOTest {
         dao.deleteById(8);
         Feedback fact  = dao.getFeedbackById(8);
 
-
+        Assert.assertEquals(null, fact);
         log.info("expected value null, actual value - {}", fact);
     }
 
@@ -59,14 +62,17 @@ public class FeedbackDAOTest {
 
         int fact = list.size();
 
-        log.info("expected value '7', actual value - {}", fact );
+        Assert.assertEquals(6, fact);
+        log.info("expected value '6', actual value - {}", fact );
     }
 
     @Test
     public void testGetFeedbackById() {
         Feedback f = dao.getFeedbackById(7);
         String fact = f.getDescription();
-        log.info("expected value '...', actual value - {}", fact );
+
+        Assert.assertEquals("broke", fact);
+        log.info("expected value 'broke', actual value - {}", fact );
     }
 
     @Test
@@ -76,6 +82,7 @@ public class FeedbackDAOTest {
         Feedback f = dao.getFeedbackById(7);
         String fact = f.getDescription();
 
+        Assert.assertEquals("broke", fact);
         log.info("expected value 'broke', actual value - {}", fact );
     }
 }
