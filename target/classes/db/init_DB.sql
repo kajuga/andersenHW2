@@ -25,7 +25,7 @@ CREATE TABLE employee(
                          skype varchar (50),
                          team_id int,
                          PRIMARY KEY (employee_id),
-                         FOREIGN KEY (team_id) REFERENCES team (team_id)
+                         FOREIGN KEY (team_id) REFERENCES team (team_id) ON DELETE CASCADE
 );
 
 CREATE  TABLE project(
@@ -37,8 +37,8 @@ CREATE  TABLE project(
                          project_manager_id int,
                          team_id            int,
                          PRIMARY KEY (project_id),
-                         FOREIGN KEY (project_manager_id) REFERENCES employee (employee_id),
-                         FOREIGN KEY (team_id) REFERENCES team (team_id)
+                         FOREIGN KEY (project_manager_id) REFERENCES employee (employee_id) ON DELETE CASCADE ,
+                         FOREIGN KEY (team_id) REFERENCES team (team_id) ON DELETE CASCADE
 );
 
 
@@ -48,5 +48,5 @@ CREATE TABLE  feed_back(
                            date_of_fb date not null,
                            employee_id int,
                            PRIMARY KEY (feed_back_id),
-                           FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+                           FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 );

@@ -14,20 +14,24 @@ public class EmployeeDAO {
     private static final String INSERT_EMPLOYEE =
             "INSERT INTO employee (first_name, last_name, middle_name, short_name, " +
                     "email, phone_number, birthday, date_of_start, dev_level, english_level, skype, team_id)" +
-                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                    " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING employee_id";
 
     private static final String DELETE_EMPLOYEE =
-            "DELETE FROM employee WHERE employee_id = ?";
+            "DELETE FROM employee WHERE employee_id = ? RETURNING employee_id";
 
     private static final String UPDATE_EMPLOYEE =
             "UPDATE employee SET " +
                     " first_name = ?, last_name = ?, middle_name = ?, short_name = ?, email = ?, phone_number = ?, birthday = ?, date_of_start = ?, dev_level = ?, english_level = ?, skype = ?, team_id = ? " +
-                    " WHERE employee_id = ?";
+                    " WHERE employee_id = ? RETURNING employee_id";
 
-    private static final String SELECT_ALL_WITH_TEAM = "SELECT * FROM employee AS e JOIN team AS t ON e.team_id = t.team_id WHERE e.team_id = ?";
 
-    @Setter
+    private static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE employee_id = ?";
+
     private ConnectionBuilder connectionBuilder;
+
+    public void setConnectionBuilder(ConnectionBuilder connectionBuilder) {
+        this.connectionBuilder = connectionBuilder;
+    }
 
     public boolean createEmployee(Employee employee) {
         boolean result = false;
@@ -49,32 +53,26 @@ public class EmployeeDAO {
 
             ResultSet rs = statement.executeQuery();
             result = rs.next();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
 
-    public int deleteById(int id) {
-
-        int result = 0;
+    public void deleteById(int id) {
 
         try (Connection con = getConnection();
              PreparedStatement statement = con.prepareStatement(DELETE_EMPLOYEE)) {
-
             statement.setInt(1, id);
-
-            result = statement.executeUpdate();
+            statement.executeQuery();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return result;
     }
 
-    public int updateEmployee(Employee employee) {
-        int result = 0;
+    public void updateEmployee(Employee employee) {
 
         try (Connection con = getConnection()){
              PreparedStatement statement = con.prepareStatement(UPDATE_EMPLOYEE);
@@ -93,53 +91,51 @@ public class EmployeeDAO {
             statement.setInt(12, employee.getTeam().getTeamId());
             statement.setInt(13, employee.getEmployeeId());
 
-            result = statement.executeUpdate();
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return result;
     }
 
-    public List<Employee> findAllEmployeesWithTeam(int teamId) {
+    public Employee getEmployeeById(int employeeId) {
 
-        List<Employee> employeesLists = new ArrayList<>();
+        Employee employee = null;
 
+        try(Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(GET_EMPLOYEE_BY_ID);
+            statement.setInt(1, employeeId);
+            ResultSet rs = statement.executeQuery();
 
-        try (Connection con = getConnection()) {
-             PreparedStatement statement = con.prepareStatement(SELECT_ALL_WITH_TEAM);
-             statement.setInt(1, teamId);
-             ResultSet resultSet = statement.executeQuery();
-
-            //команды
-            while (resultSet.next()) {
+            while (rs.next()) {
                 Team team = new Team();
-                team.setTeamId(resultSet.getInt("team_id"));
-                team.setTeamName(resultSet.getString("team_name"));
+                team.setTeamId(rs.getInt("team_id"));
 
-                Employee employee = new Employee();
-                employee.setEmployeeId(resultSet.getInt("employee_id"));
-                employee.setFirstName(resultSet.getString("first_name"));
-                employee.setLastName(resultSet.getString("last_name"));
-                employee.setMiddleName(resultSet.getString("middle_name"));
-                employee.setShortName(resultSet.getString("short_name"));
-                employee.setEmail(resultSet.getString("email"));
-                employee.setPhoneNumber(resultSet.getString("phone_number"));
-                employee.setBirthday(resultSet.getDate("birthday").toLocalDate());
-                employee.setDateOfStart(resultSet.getDate("date_of_start").toLocalDate());
-                employee.setEmpLevel(resultSet.getInt("dev_level"));
-                employee.setEnglishLevel(resultSet.getInt("english_level"));
-                employee.setSkype(resultSet.getString("skype"));
+                employee = new Employee();
+                employee.setEmployeeId(rs.getInt("employee_id"));
+                employee.setFirstName(rs.getString("first_name"));
+                employee.setLastName(rs.getString("last_name"));
+                employee.setMiddleName(rs.getString("middle_name"));
+                employee.setShortName(rs.getString("short_name"));
+                employee.setEmail(rs.getString("email"));
+                employee.setPhoneNumber(rs.getString("phone_number"));
+                employee.setBirthday(rs.getDate("birthday").toLocalDate());
+                employee.setDateOfStart(rs.getDate("date_of_start").toLocalDate());
+                employee.setEmpLevel(rs.getInt("dev_level"));
+                employee.setEnglishLevel(rs.getInt("english_level"));
+                employee.setSkype(rs.getString("skype"));
                 employee.setTeam(team);
 
-                employeesLists.add(employee);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return employeesLists;
+
+        return employee;
     }
 
     private Connection getConnection() throws SQLException {

@@ -1,12 +1,14 @@
 package com.kosshit.anderse.task2_3.connection;
 
+import org.junit.Test;
+
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertTrue;
 
 class PoolConnectionBuilderTest {
 
-    @org.junit.jupiter.api.Test
+    @Test
     void create() {
         PoolConnectionBuilder connectionPool = null;
         try {

@@ -15,16 +15,14 @@ import java.util.List;
 
 public class ProjectDAO {
 
-    private static final String CREATE_PROJECT = "INSERT INTO project " +
-            "(name_of_project, customer, duration, methodology) " +
-            "VALUES (?, ?, ?, ?)";
-    private static final String DELETE_PROJECT = "DELETE FROM project WHERE project_id = ?";
+    private static final String CREATE_PROJECT = "INSERT INTO project (name_of_project, customer, duration, methodology) VALUES (?, ?, ?, ?) RETURNING project_id";
+    private static final String DELETE_PROJECT = "DELETE FROM project WHERE project_id = ? RETURNING project_id";
 
-    private static final String GET_ALL_PROJECT = "SELECT * FROM project";
+    private static final String GET_ALL_PROJECT = "SELECT * FROM project ";
 
-    private static final String GET_PROJECT_BY_ID = "SELECT * FROM project AS p WHERE p.project_id = ?";
+    private static final String GET_PROJECT_BY_ID = "SELECT * FROM project AS p WHERE p.project_id = ? ";
 
-    private static final String UPDATE_PROJECT = "UPDATE project AS p SET name_of_project = ?, customer = ?, duration = ?, methodology = ? WHERE p.project_id = ? ";
+    private static final String UPDATE_PROJECT = "UPDATE project AS p SET name_of_project = ?, customer = ?, duration = ?, methodology = ? WHERE p.project_id = ? RETURNING project_id";
 
     @Setter
     private ConnectionBuilder connectionBuilder;
@@ -50,21 +48,17 @@ public class ProjectDAO {
         return result;
     }
 
-    public int deleteById(int projectId) {
-        int result = 0;
+    public void deleteById(int projectId) {
 
-        try(Connection connection = getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(DELETE_PROJECT);
-
+        try(Connection connection = getConnection();
+            PreparedStatement statement = connection.prepareStatement(DELETE_PROJECT)){
             statement.setInt(1, projectId);
-
-            result = statement.executeUpdate();
+            statement.executeQuery();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return result;
     }
 
     public List<Project> getAllProjects() {
@@ -109,20 +103,22 @@ public class ProjectDAO {
            statement.setInt(1, projectId);
            ResultSet rs = statement.executeQuery();
 
-            Team team = new Team();
-            team.setTeamId(rs.getInt("team_id"));
+           while(rs.next()) {
+               Team team = new Team();
+               team.setTeamId(rs.getInt("team_id"));
 
-            Employee employee = new Employee();
-            employee.setEmployeeId(rs.getInt("project_manager_id"));
+               Employee employee = new Employee();
+               employee.setEmployeeId(rs.getInt("project_manager_id"));
 
-            project.setProjectId(rs.getInt("project_id"));
-            project.setNameOfProject(rs.getString("name_of_project"));
-            project.setCustomer(rs.getString("customer"));
-            project.setDuration(rs.getString("duration"));
-            project.setMethodology(rs.getString("methodology"));
-            project.setTeam(team);
-            project.setProjectManager(employee);
-
+               project = new Project();
+               project.setProjectId(rs.getInt("project_id"));
+               project.setNameOfProject(rs.getString("name_of_project"));
+               project.setCustomer(rs.getString("customer"));
+               project.setDuration(rs.getString("duration"));
+               project.setMethodology(rs.getString("methodology"));
+               project.setTeam(team);
+               project.setProjectManager(employee);
+           }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -130,8 +126,7 @@ public class ProjectDAO {
         return project;
     }
 
-    public int updateProject(Project project) {
-        int result = 0;
+    public void updateProject(Project project) {
 
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_PROJECT);
@@ -142,13 +137,12 @@ public class ProjectDAO {
             statement.setString(4, project.getMethodology());
             statement.setInt(5, project.getProjectId());
 
-            result = statement.executeUpdate();
+            ResultSet rs = statement.executeQuery();
+            rs.next();
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        return result;
     }
 
 
