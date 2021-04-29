@@ -1,14 +1,16 @@
 package com.kosshit.anderse.task2_3.jdbc;
 
 import com.kosshit.anderse.task2_3.connection.PoolConnectionBuilder;
-import com.kosshit.anderse.task2_3.model.*;
+import com.kosshit.anderse.task2_3.model.Employee;
+import com.kosshit.anderse.task2_3.model.Project;
+import com.kosshit.anderse.task2_3.model.Team;
 import junit.framework.TestCase;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,11 +47,13 @@ public class ProjectDAOTest extends TestCase {
 
     }
 
+    @Test
     public void testCreateProject() {
         boolean fact = dao.createProject(project);
         log.info("expected value true, actual value - {}", fact);
     }
 
+    @Test
     public void testDeleteById() {
         dao.deleteById(3);
         Project fact  = dao.getProjectById(3);
@@ -58,12 +62,14 @@ public class ProjectDAOTest extends TestCase {
         log.info("expected value null, actual value - {}", fact);
     }
 
+    @Test
     public void testGetProjectById() {
         Project p = dao.getProjectById(2);
         String fact = p.getCustomer();
         log.info("expected value RFS, actual value - {}", fact );
     }
 
+    @Test
     public void testUpdateProject() {
         project.setProjectId(1);
         dao.updateProject(project);
@@ -73,6 +79,7 @@ public class ProjectDAOTest extends TestCase {
         log.info("expected value '...', actual value - {}", fact );
     }
 
+    @Test
     public void testGetAllProjects() {
         List<Project> list = dao.getAllProjects();
 

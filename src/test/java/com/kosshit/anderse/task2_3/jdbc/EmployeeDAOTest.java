@@ -81,6 +81,6 @@ public class EmployeeDAOTest {
     public void testGetEmployeeByIdTest() {
        Employee e = dao.getEmployeeById(7);
        String fact = e.getLastName();
-       log.info("expected value Crosby, actual value - {}", fact );
+       log.info("expected value 'Crosby', actual value - {}", fact );
     }
 }
