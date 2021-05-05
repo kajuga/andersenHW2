@@ -10,11 +10,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 public class EmployeeDAOTest {
@@ -25,12 +22,11 @@ public class EmployeeDAOTest {
     @Before
     public void setUp() {
         dao = new EmployeeDAO();
-        List<Connection> connectionPool = new ArrayList<>();
         try {
             dao.setConnectionBuilder(PoolConnectionBuilder.create("jdbc:postgresql://localhost:5432/postgres",
                     "postgres", "root"));
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         employee = new Employee();

@@ -6,10 +6,11 @@ import java.sql.SQLException;
 
 import static org.junit.Assert.assertTrue;
 
-class PoolConnectionBuilderTest {
+
+public class PoolConnectionBuilderTest {
 
     @Test
-    void create() {
+    public void create() {
         PoolConnectionBuilder connectionPool = null;
         try {
             connectionPool = PoolConnectionBuilder.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "root");

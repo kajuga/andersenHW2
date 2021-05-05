@@ -3,6 +3,7 @@ package com.kosshit.anderse.task2_3.jdbc;
 import com.kosshit.anderse.task2_3.connection.ConnectionBuilder;
 import com.kosshit.anderse.task2_3.model.Team;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class TeamDAO {
 
     private static final String CREATE_TEAM = "INSERT INTO team (team_name) VALUES (?) RETURNING team_id";
@@ -27,6 +29,8 @@ public class TeamDAO {
     private ConnectionBuilder connectionBuilder;
 
     public boolean createTeam (Team team) {
+        log.info("create {}", team);
+
         boolean result = false;
 
         try(Connection con = getConnection()) {
@@ -44,6 +48,7 @@ public class TeamDAO {
     }
 
     public void deleteById(int teamId) {
+        log.info("delete {}", teamId);
 
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_TEAM);
@@ -56,7 +61,7 @@ public class TeamDAO {
     }
 
     public List<Team> getAllTeams() {
-
+        log.info("getAll");
         List<Team> teams = new ArrayList<>();
 
         try(Connection connection = getConnection()) {
@@ -79,6 +84,8 @@ public class TeamDAO {
     }
 
     public Team getTeamById(int teamId) {
+        log.info("get {}", teamId);
+
         Team team = null;
 
         try(Connection connection = getConnection()) {
@@ -100,6 +107,7 @@ public class TeamDAO {
     }
 
     public void updateTeam(Team team) {
+        log.info("update");
 
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_TEAM);

@@ -18,4 +18,16 @@ public class Project {
     private Employee projectManager;
     private Team team;
 
+    public Project() {
+    }
+
+    public Project(int projectId, String nameOfProject, String customer, String duration, String methodology, Employee projectManager, Team team) {
+        this.projectId = projectId;
+        this.nameOfProject = nameOfProject;
+        this.customer = customer;
+        this.duration = duration;
+        this.methodology = methodology;
+        this.projectManager = projectManager;
+        this.team = team;
+    }
 }

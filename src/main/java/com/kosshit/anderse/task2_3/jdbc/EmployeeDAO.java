@@ -2,13 +2,15 @@ package com.kosshit.anderse.task2_3.jdbc;
 
 import com.kosshit.anderse.task2_3.connection.ConnectionBuilder;
 import com.kosshit.anderse.task2_3.model.Employee;
+import com.kosshit.anderse.task2_3.model.Project;
 import com.kosshit.anderse.task2_3.model.Team;
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@Slf4j
 public class EmployeeDAO {
 
     private static final String INSERT_EMPLOYEE =
@@ -27,6 +29,8 @@ public class EmployeeDAO {
 
     private static final String GET_EMPLOYEE_BY_ID = "SELECT * FROM employee WHERE employee_id = ?";
 
+    private static final String GET_ALL_EMPLOYEE = "SELECT * FROM employee ";
+
     private ConnectionBuilder connectionBuilder;
 
     public void setConnectionBuilder(ConnectionBuilder connectionBuilder) {
@@ -34,6 +38,7 @@ public class EmployeeDAO {
     }
 
     public boolean createEmployee(Employee employee) {
+        log.info("create {}", employee);
         boolean result = false;
 
         try(Connection con = getConnection()) {
@@ -60,6 +65,7 @@ public class EmployeeDAO {
     }
 
     public void deleteById(int id) {
+        log.info("delete {}", id);
 
         try (Connection con = getConnection();
              PreparedStatement statement = con.prepareStatement(DELETE_EMPLOYEE)) {
@@ -73,6 +79,7 @@ public class EmployeeDAO {
     }
 
     public void updateEmployee(Employee employee) {
+        log.info("update...");
 
         try (Connection con = getConnection()){
              PreparedStatement statement = con.prepareStatement(UPDATE_EMPLOYEE);
@@ -102,6 +109,7 @@ public class EmployeeDAO {
     }
 
     public Employee getEmployeeById(int employeeId) {
+        log.info("get employee with {}", employeeId);
 
         Employee employee = null;
 
@@ -136,6 +144,44 @@ public class EmployeeDAO {
         }
 
         return employee;
+    }
+
+    public List<Employee> getAllEmployees() {
+        log.info("getAll");
+
+        List<Employee> employees = new ArrayList<>();
+
+        try(Connection connection = getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(GET_ALL_EMPLOYEE);
+            ResultSet rs = statement.executeQuery();
+            Employee employee = null;
+
+            while (rs.next()) {
+                Team team = new Team();
+                team.setTeamId(rs.getInt("team_id"));
+
+                employee = new Employee();
+                employee.setEmployeeId(rs.getInt("employee_id"));
+                employee.setFirstName(rs.getString("first_name"));
+                employee.setLastName(rs.getString("last_name"));
+                employee.setMiddleName(rs.getString("middle_name"));
+                employee.setShortName(rs.getString("short_name"));
+                employee.setEmail(rs.getString("email"));
+                employee.setPhoneNumber(rs.getString("phone_number"));
+                employee.setBirthday(rs.getDate("birthday").toLocalDate());
+                employee.setDateOfStart(rs.getDate("date_of_start").toLocalDate());
+                employee.setEmpLevel(rs.getInt("dev_level"));
+                employee.setEnglishLevel(rs.getInt("english_level"));
+                employee.setSkype(rs.getString("skype"));
+                employee.setTeam(team);
+
+                employees.add(employee);
+            }
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return employees;
     }
 
     private Connection getConnection() throws SQLException {

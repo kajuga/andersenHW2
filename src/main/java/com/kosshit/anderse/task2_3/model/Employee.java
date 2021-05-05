@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(exclude = "employeeId")
 public class Employee {
 
-    private int employeeId;
+    private Integer employeeId;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -28,6 +28,33 @@ public class Employee {
     private String skype;
     private Feedback feedBack;
     private Team team;
+
+    public Employee() {
+    }
+
+    public Employee(Integer employeeId, String firstName, String lastName, String middleName) {
+        this.employeeId = employeeId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleName = middleName;
+    }
+
+    public Employee(Integer employeeId, String firstName, String lastName, String middleName, String email, String phoneNumber, LocalDate birthday, LocalDate dateOfStart, Project project, EmployerLevel devLevel, EnglishLevel englishLevel, String skype, Feedback feedBack, Team team) {
+        this.employeeId = employeeId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleName = middleName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.birthday = birthday;
+        this.dateOfStart = dateOfStart;
+        this.project = project;
+        this.devLevel = devLevel;
+        this.englishLevel = englishLevel;
+        this.skype = skype;
+        this.feedBack = feedBack;
+        this.team = team;
+    }
 
     public EmployerLevel getEmpLevel() {
         return devLevel;

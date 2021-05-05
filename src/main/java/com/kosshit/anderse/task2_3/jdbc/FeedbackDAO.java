@@ -1,16 +1,15 @@
 package com.kosshit.anderse.task2_3.jdbc;
 
 import com.kosshit.anderse.task2_3.connection.ConnectionBuilder;
-import com.kosshit.anderse.task2_3.model.Employee;
 import com.kosshit.anderse.task2_3.model.Feedback;
-import com.kosshit.anderse.task2_3.model.Project;
-import com.kosshit.anderse.task2_3.model.Team;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class FeedbackDAO {
 
     private static final String CREATE_FEEDBACK = "INSERT INTO feed_back (description, date_of_fb) VALUES (?, ?) RETURNING feed_back_id";
@@ -28,6 +27,7 @@ public class FeedbackDAO {
 
 
     public boolean createFeedback (Feedback feedback) {
+        log.info("create {}", feedback);
         boolean result = false;
 
         try(Connection con = getConnection()) {
@@ -46,6 +46,7 @@ public class FeedbackDAO {
     }
 
     public void deleteById(int feedbackId) {
+        log.info("delete {}", feedbackId);
 
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(DELETE_FEEDBACK);
@@ -58,7 +59,7 @@ public class FeedbackDAO {
     }
 
     public List<Feedback> getAllFeedback() {
-
+        log.info("getAll");
         List<Feedback> feedbacks = new ArrayList<>();
 
         try(Connection connection = getConnection()) {
@@ -81,6 +82,7 @@ public class FeedbackDAO {
     }
 
     public Feedback getFeedbackById(int feedbackId) {
+        log.info("get by id - {}", feedbackId);
         Feedback feedback = null;
 
         try(Connection connection = getConnection()) {
@@ -103,7 +105,7 @@ public class FeedbackDAO {
     }
 
     public void updateFeedback(Feedback feedback) {
-
+        log.info("update");
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_FEEDBACK);
 

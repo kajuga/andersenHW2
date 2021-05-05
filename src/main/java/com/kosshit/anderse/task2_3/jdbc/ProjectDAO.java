@@ -5,6 +5,7 @@ import com.kosshit.anderse.task2_3.model.Employee;
 import com.kosshit.anderse.task2_3.model.Project;
 import com.kosshit.anderse.task2_3.model.Team;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ProjectDAO {
 
     private static final String CREATE_PROJECT = "INSERT INTO project (name_of_project, customer, duration, methodology) VALUES (?, ?, ?, ?) RETURNING project_id";
@@ -29,6 +31,7 @@ public class ProjectDAO {
 
 
     public boolean createProject (Project project) {
+        log.info("create {}", project);
         boolean result = false;
 
         try(Connection con = getConnection()) {
@@ -49,7 +52,7 @@ public class ProjectDAO {
     }
 
     public void deleteById(int projectId) {
-
+        log.info("delete {}", projectId);
         try(Connection connection = getConnection();
             PreparedStatement statement = connection.prepareStatement(DELETE_PROJECT)){
             statement.setInt(1, projectId);
@@ -62,7 +65,7 @@ public class ProjectDAO {
     }
 
     public List<Project> getAllProjects() {
-
+        log.info("getAll");
         List<Project> projects = new ArrayList<>();
 
         try(Connection connection = getConnection()) {
@@ -96,6 +99,8 @@ public class ProjectDAO {
     }
 
     public Project getProjectById(int projectId) {
+        log.info("get {}", projectId);
+
         Project project = null;
 
         try(Connection connection = getConnection()) {
@@ -127,7 +132,7 @@ public class ProjectDAO {
     }
 
     public void updateProject(Project project) {
-
+        log.info("update {}", project);
         try(Connection connection = getConnection()) {
             PreparedStatement statement = connection.prepareStatement(UPDATE_PROJECT);
 

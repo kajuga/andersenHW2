@@ -28,6 +28,7 @@ public class ProjectDAOTest extends TestCase {
         try {
             dao.setConnectionBuilder(PoolConnectionBuilder.create("jdbc:postgresql://localhost:5432/postgres",
                     "postgres", "root"));
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -58,8 +59,8 @@ public class ProjectDAOTest extends TestCase {
 
     @Test
     public void testDeleteById() {
-        dao.deleteById(3);
-        Project fact  = dao.getProjectById(3);
+        dao.deleteById(project.getProjectId());
+        Project fact  = dao.getProjectById(project.getProjectId());
 
         Assert.assertEquals(null, fact);
         log.info("expected value null, actual value - {}", fact);
