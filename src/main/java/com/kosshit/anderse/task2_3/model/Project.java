@@ -10,7 +10,7 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode(exclude = "projectId")
 public class Project {
-    private int projectId;
+    private Integer projectId;
     private String nameOfProject;
     private String customer;
     private String duration;
@@ -21,7 +21,7 @@ public class Project {
     public Project() {
     }
 
-    public Project(int projectId, String nameOfProject, String customer, String duration, String methodology, Employee projectManager, Team team) {
+    public Project(Integer projectId, String nameOfProject, String customer, String duration, String methodology, Employee projectManager, Team team) {
         this.projectId = projectId;
         this.nameOfProject = nameOfProject;
         this.customer = customer;
@@ -29,5 +29,9 @@ public class Project {
         this.methodology = methodology;
         this.projectManager = projectManager;
         this.team = team;
+    }
+
+    public boolean isNew() {
+        return projectId == null;
     }
 }

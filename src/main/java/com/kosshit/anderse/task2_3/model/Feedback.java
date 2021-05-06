@@ -12,16 +12,20 @@ import java.time.LocalDate;
 @ToString
 @EqualsAndHashCode(exclude = "feedId")
 public class Feedback {
-    private int feedId;
+    private Integer feedId;
     private String description;
     private LocalDate date;
 
     public Feedback() {
     }
 
-    public Feedback(int feedId, String description, LocalDate date) {
+    public Feedback(Integer feedId, String description, LocalDate date) {
         this.feedId = feedId;
         this.description = description;
         this.date = date;
+    }
+
+    public boolean isNew() {
+        return feedId == null;
     }
 }

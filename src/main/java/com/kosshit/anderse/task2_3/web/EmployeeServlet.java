@@ -31,28 +31,30 @@ public class EmployeeServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        String id = request.getParameter("employeeId");
+        String id = request.getParameter("id");
 
-        Employee employee = new Employee(id.isEmpty() ? null : Integer.valueOf(id),
-                request.getParameter("firstName"),
-                request.getParameter("lastName"),
-                request.getParameter("middleName"),
-                request.getParameter("email"),
-                request.getParameter("phoneNumber"),
-                LocalDate.parse(request.getParameter("birthday")),
-                LocalDate.parse(request.getParameter("dateOfStart")),
-                new Project(),
-                EmployerLevel.valueOf(request.getParameter("devLevel")),
-                EnglishLevel.valueOf(request.getParameter("englishLevel")),
-                request.getParameter("skype"),
-                new Feedback(),
-                new Team());
+        Employee employee = new Employee();
+        employee.setEmployeeId(id.isEmpty()? null : Integer.valueOf(id));
+        employee.setFirstName(request.getParameter("firstName"));
+        employee.setLastName(request.getParameter("lastName"));
+        employee.setMiddleName(request.getParameter("middleName"));
+        employee.setEmail(request.getParameter("email"));
+        employee.setPhoneNumber(request.getParameter("phoneNumber"));
+        employee.setBirthday(LocalDate.parse(request.getParameter("birthday")));
+        employee.setDateOfStart(LocalDate.parse(request.getParameter("dateOfStart")));
+        employee.setEmpLevel(EmployerLevel.valueOf(request.getParameter("devLevel")));
+        employee.setEnglishLevel(EnglishLevel.valueOf(request.getParameter("englishLevel")));
+        employee.setSkype(request.getParameter("skype"));
+        Team team = new Team();
+        team.setTeamId(Integer.valueOf(request.getParameter("teamId")));
+        employee.setTeam(team);
 
-        if (id.isEmpty()) {
+        if (employee.isNew()) {
             dao.createEmployee(employee);
         } else {
             dao.updateEmployee(employee);
         }
+
         response.sendRedirect("employee");
 
     }
@@ -67,15 +69,17 @@ public class EmployeeServlet extends HttpServlet {
                 response.sendRedirect("employee");
                 break;
             case "create" :
+                final Employee create = new Employee();
+                request.setAttribute("employee", create);
+                request.getRequestDispatcher("editEmployee.jsp").forward(request, response);
             case "update" :
-                final Employee employee = "create".equals(action) ?
-                        new Employee(null, "Ivanov", "Ivan", "Ivanovich") : dao.getEmployeeById(getId(request));
+                final Employee employee = dao.getEmployeeById(getId(request));
                 request.setAttribute("employee", employee);
-                request.getRequestDispatcher("formEmployee.jsp").forward(request, response);
+                request.getRequestDispatcher("editEmployee.jsp").forward(request, response);
                 break;
             case "all" :
             default:
-                request.setAttribute("employee", dao.getAllEmployees());
+                request.setAttribute("employees", dao.getAllEmployees());
                 request.getRequestDispatcher("employee.jsp").forward(request, response);
         }
 

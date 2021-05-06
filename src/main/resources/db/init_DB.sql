@@ -32,7 +32,7 @@ CREATE  TABLE project(
                          project_id         SERIAL,
                          name_of_project    varchar (50)         not null ,
                          customer           varchar (50),
-                         duration           varchar (10)         not null,
+                         duration           varchar (50)         not null,
                          methodology        varchar (50),
                          project_manager_id int,
                          team_id            int,

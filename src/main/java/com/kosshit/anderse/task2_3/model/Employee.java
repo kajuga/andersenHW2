@@ -32,8 +32,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(Integer employeeId, String firstName, String lastName, String middleName) {
-        this.employeeId = employeeId;
+    public Employee(String firstName, String lastName, String middleName) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
@@ -115,6 +114,10 @@ public class Employee {
             case 5: this.englishLevel = EnglishLevel.C2;
                 break;
         }
+    }
+
+    public boolean isNew() {
+        return employeeId == null;
     }
 
 }
