@@ -59,7 +59,7 @@
         </dl>
         <dl>
             <dt>№ Team:</dt>
-            <dd><input type="text" name="teamId" required></dd>
+            <dd><input type="text" name="teamId" value="${employee.team.getTeamId()}" required></dd>
         </dl>
         <button type="submit">Save</button>
         <button onclick="window.history.back()" type="button">Cancel</button>

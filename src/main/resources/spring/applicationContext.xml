@@ -1,0 +1,75 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
+
+    <!-- PoolConnection -->
+    <bean class="com.kosshit.anderse.task2_3.connection.PoolConnectionBuilder" id="dataSource" >
+
+        <constructor-arg index="0" value="${database.url}"/>
+        <constructor-arg index="1" value="${database.user}"/>
+        <constructor-arg index="2" value="${database.password}"/>
+        <constructor-arg index="3">
+            <list>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- Employee -->
+    <bean class="com.kosshit.anderse.task2_3.jdbc.EmployeeDAO" id="employeeDAO" >
+        <property name="connectionBuilder" ref="dataSource" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.service.EmployeeService" id="employeeService">
+        <constructor-arg name="employeeDAO" ref="employeeDAO" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.web.controller.EmployeeController">
+        <constructor-arg name="service" ref="employeeService" />
+    </bean>
+
+    <!-- FeedBack -->
+    <bean class="com.kosshit.anderse.task2_3.jdbc.FeedbackDAO" id="feedbackDAO" >
+        <property name="connectionBuilder" ref="dataSource" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.service.FeedbackService" id="feedbackService">
+        <constructor-arg name="feedbackDAO" ref="feedbackDAO" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.web.controller.FeedbackController">
+        <constructor-arg name="service" ref="feedbackService" />
+    </bean>
+
+    <!-- Project -->
+    <bean class="com.kosshit.anderse.task2_3.jdbc.ProjectDAO" id="projectDAO" >
+        <property name="connectionBuilder" ref="dataSource" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.service.ProjectService" id="projectService">
+        <constructor-arg name="projectDAO" ref="projectDAO" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.web.controller.ProjectController">
+        <constructor-arg name="service" ref="projectService" />
+    </bean>
+
+    <!-- Team -->
+    <bean class="com.kosshit.anderse.task2_3.jdbc.TeamDAO" id="teamDAO" >
+        <property name="connectionBuilder" ref="dataSource" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.service.TeamService" id="teamService">
+        <constructor-arg name="teamDAO" ref="teamDAO" />
+    </bean>
+
+    <bean class="com.kosshit.anderse.task2_3.web.controller.TeamController">
+        <constructor-arg name="service" ref="teamService" />
+    </bean>
+
+</beans>

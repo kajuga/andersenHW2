@@ -30,13 +30,13 @@
             <dd><input type="text" value="${project.methodology}" name="methodology" required></dd>
         </dl>
         <dl>
-<%--            <dt>Manager id:</dt>--%>
-<%--            <dd><input type="text" value="${project.projectManager}" name="managerId" required></dd>--%>
-<%--        </dl>--%>
-<%--        <dl>--%>
-<%--            <dt>№ Team:</dt>--%>
-<%--            <dd><input type="text" value="Id команды" name="teamId" required></dd>--%>
-<%--        </dl>--%>
+            <dt>№ Project Manager:</dt>
+            <dd><input type="text" value="${project.projectManager.getEmployeeId()}" name="projectManagerId" required></dd>
+        </dl>
+        <dl>
+            <dt>№ Team:</dt>
+            <dd><input type="text" value="${project.team.getTeamId()}" name="teamId" required></dd>
+        </dl>
 
         <button type="submit">Save</button>
         <button onclick="window.history.back()" type="button">Cancel</button>

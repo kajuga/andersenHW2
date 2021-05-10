@@ -2,8 +2,6 @@ package com.kosshit.anderse.task2_3.jdbc;
 
 import com.kosshit.anderse.task2_3.connection.ConnectionBuilder;
 import com.kosshit.anderse.task2_3.model.Employee;
-import com.kosshit.anderse.task2_3.model.EmployerLevel;
-import com.kosshit.anderse.task2_3.model.Project;
 import com.kosshit.anderse.task2_3.model.Team;
 import lombok.extern.slf4j.Slf4j;
 
@@ -147,7 +145,7 @@ public class EmployeeDAO {
     }
 
     public List<Employee> getAllEmployees() {
-        log.info("getAll");
+        log.info("getAllEmployees");
 
         List<Employee> employees = new ArrayList<>();
 

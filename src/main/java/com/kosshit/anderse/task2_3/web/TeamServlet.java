@@ -1,29 +1,25 @@
 package com.kosshit.anderse.task2_3.web;
 
-import com.kosshit.anderse.task2_3.connection.PoolConnectionBuilder;
-import com.kosshit.anderse.task2_3.jdbc.TeamDAO;
 import com.kosshit.anderse.task2_3.model.Team;
+import com.kosshit.anderse.task2_3.web.controller.TeamController;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Objects;
 
 public class TeamServlet extends HttpServlet {
 
-    private TeamDAO dao;
+    private ClassPathXmlApplicationContext context;
+    private TeamController controller;
 
     @Override
     public void init() throws ServletException {
-        dao= new TeamDAO();
-        try {
-            dao.setConnectionBuilder(PoolConnectionBuilder.create("jdbc:postgresql://localhost:5432/postgres", "postgres", "root"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+      context = new ClassPathXmlApplicationContext("spring/applicationContext.xml");
+      controller = context.getBean(TeamController.class);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,9 +32,9 @@ public class TeamServlet extends HttpServlet {
         team.setTeamName(request.getParameter("name"));
 
         if (team.isNew()) {
-            dao.createTeam(team);
+            controller.create(team);
         } else {
-            dao.updateTeam(team);
+            controller.update(team);
         }
         response.sendRedirect("team");
     }
@@ -49,7 +45,7 @@ public class TeamServlet extends HttpServlet {
         switch (action == null ? "all" : action) {
             case "delete" :
                 int id = getId(request);
-                dao.deleteById(id);
+                controller.delete(id);
                 response.sendRedirect("team");
                 break;
             case "create" :
@@ -58,16 +54,21 @@ public class TeamServlet extends HttpServlet {
                 request.getRequestDispatcher("editTeam.jsp").forward(request, response);
                 break;
             case "update" :
-                final Team team = dao.getTeamById(getId(request));
+                final Team team = controller.getById(getId(request));
                 request.setAttribute("team", team);
                 request.getRequestDispatcher("editTeam.jsp").forward(request, response);
                 break;
             case "all" :
             default:
-                request.setAttribute("teams", dao.getAllTeams());
+                request.setAttribute("teams", controller.getAll());
                 request.getRequestDispatcher("team.jsp").forward(request, response);
         }
 
+    }
+
+    @Override
+    public void destroy() {
+        context.close();
     }
 
     private int getId(HttpServletRequest request) {

@@ -19,11 +19,13 @@
             <th>Customer</th>
             <th>Duration</th>
             <th>Methodology</th>
+            <th>№ Project Manager</th>
+            <th>№ Team</th>
             <th></th>
             <th></th>
         </tr>
         </thead>
-        <c:forEach items="${projects}" var="proj"><
+        <c:forEach items="${projects}" var="proj">
             <jsp:useBean id="proj" scope="page" type="com.kosshit.anderse.task2_3.model.Project"/>
             <tr>
             <td>${proj.projectId}</td>
@@ -31,10 +33,12 @@
             <td>${proj.customer}</td>
             <td>${proj.duration}</td>
             <td>${proj.methodology}</td>
+            <td>${proj.projectManager.getEmployeeId()}</td>
+            <td>${proj.team.getTeamId()}</td>
             <td><a href="project?action=update&projectId=${proj.projectId}">Update</a></td>
             <td><a href="project?action=delete&projectId=${proj.projectId}">Delete</a></td>
             </tr>
-        ></c:forEach>
+        </c:forEach>
     </table>
 </section>
 </body>

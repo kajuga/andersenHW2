@@ -24,7 +24,7 @@ public class ProjectDAO {
 
     private static final String GET_PROJECT_BY_ID = "SELECT * FROM project AS p WHERE p.project_id = ? ";
 
-    private static final String UPDATE_PROJECT = "UPDATE project AS p SET name_of_project = ?, customer = ?, duration = ?, methodology = ? WHERE p.project_id = ? RETURNING project_id";
+    private static final String UPDATE_PROJECT = "UPDATE project AS p SET name_of_project = ?, customer = ?, duration = ?, methodology = ?, project_manager_id = ?, team_id = ? WHERE p.project_id = ? RETURNING project_id";
 
     @Setter
     private ConnectionBuilder connectionBuilder;
@@ -140,7 +140,9 @@ public class ProjectDAO {
             statement.setString(2, project.getCustomer());
             statement.setString(3, project.getDuration());
             statement.setString(4, project.getMethodology());
-            statement.setInt(5, project.getProjectId());
+            statement.setInt(5, project.getProjectManager().getEmployeeId());
+            statement.setInt(6, project.getTeam().getTeamId());
+            statement.setInt(7, project.getProjectId());
 
             ResultSet rs = statement.executeQuery();
             rs.next();

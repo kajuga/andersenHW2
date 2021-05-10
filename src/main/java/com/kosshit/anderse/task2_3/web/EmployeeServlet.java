@@ -1,31 +1,29 @@
 package com.kosshit.anderse.task2_3.web;
 
-import com.kosshit.anderse.task2_3.connection.PoolConnectionBuilder;
-import com.kosshit.anderse.task2_3.jdbc.EmployeeDAO;
-import com.kosshit.anderse.task2_3.model.*;
+import com.kosshit.anderse.task2_3.model.Employee;
+import com.kosshit.anderse.task2_3.model.EmployerLevel;
+import com.kosshit.anderse.task2_3.model.EnglishLevel;
+import com.kosshit.anderse.task2_3.model.Team;
+import com.kosshit.anderse.task2_3.web.controller.EmployeeController;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class EmployeeServlet extends HttpServlet {
 
-   private EmployeeDAO dao;
+    private ClassPathXmlApplicationContext context;
+    private EmployeeController controller;
 
     @Override
     public void init() throws ServletException {
-        dao = new EmployeeDAO();
-        try {
-            dao.setConnectionBuilder(PoolConnectionBuilder.create("jdbc:postgresql://localhost:5432/postgres",
-                    "postgres", "root"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        context = new ClassPathXmlApplicationContext("spring/applicationContext.xml");
+        controller = context.getBean(EmployeeController.class);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -50,9 +48,9 @@ public class EmployeeServlet extends HttpServlet {
         employee.setTeam(team);
 
         if (employee.isNew()) {
-            dao.createEmployee(employee);
+            controller.create(employee);
         } else {
-            dao.updateEmployee(employee);
+            controller.update(employee);
         }
 
         response.sendRedirect("employee");
@@ -65,7 +63,7 @@ public class EmployeeServlet extends HttpServlet {
         switch(action == null ? "all" : action) {
             case "delete" :
                 int id = getId(request);
-                dao.deleteById(id);
+                controller.delete(id);
                 response.sendRedirect("employee");
                 break;
             case "create" :
@@ -73,16 +71,21 @@ public class EmployeeServlet extends HttpServlet {
                 request.setAttribute("employee", create);
                 request.getRequestDispatcher("editEmployee.jsp").forward(request, response);
             case "update" :
-                final Employee employee = dao.getEmployeeById(getId(request));
+                final Employee employee = controller.getById(getId(request));
                 request.setAttribute("employee", employee);
                 request.getRequestDispatcher("editEmployee.jsp").forward(request, response);
                 break;
             case "all" :
             default:
-                request.setAttribute("employees", dao.getAllEmployees());
+                request.setAttribute("employees", controller.getAll());
                 request.getRequestDispatcher("employee.jsp").forward(request, response);
         }
 
+    }
+
+    @Override
+    public void destroy() {
+        context.close();
     }
 
     private int getId(HttpServletRequest request) {

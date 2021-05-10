@@ -1,32 +1,26 @@
 package com.kosshit.anderse.task2_3.web;
 
-import com.kosshit.anderse.task2_3.connection.PoolConnectionBuilder;
-import com.kosshit.anderse.task2_3.jdbc.FeedbackDAO;
 import com.kosshit.anderse.task2_3.model.Feedback;
-import com.kosshit.anderse.task2_3.model.Team;
+import com.kosshit.anderse.task2_3.web.controller.FeedbackController;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class FeedbackServlet extends HttpServlet {
 
-    private FeedbackDAO dao;
+    private ClassPathXmlApplicationContext context;
+    private FeedbackController controller;
 
     @Override
     public void init() throws ServletException {
-        dao = new FeedbackDAO();
-        try{
-            dao.setConnectionBuilder(PoolConnectionBuilder.create("jdbc:postgresql://localhost:5432/postgres",
-                    "postgres", "root"));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        context = new ClassPathXmlApplicationContext("spring/applicationContext.xml");
+        controller = context.getBean(FeedbackController.class);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -40,9 +34,9 @@ public class FeedbackServlet extends HttpServlet {
         feedback.setDate(LocalDate.parse(request.getParameter("date")));
 
         if (feedback.isNew()) {
-            dao.createFeedback(feedback);
+            controller.create(feedback);
         } else {
-            dao.updateFeedback(feedback);
+            controller.update(feedback);
         }
         response.sendRedirect("feedback");
     }
@@ -53,7 +47,7 @@ public class FeedbackServlet extends HttpServlet {
         switch (action == null ? "all" : action) {
             case "delete" :
                 int id = getId(request);
-                dao.deleteById(id);
+                controller.delete(id);
                 response.sendRedirect("feedback");
                 break;
             case "create" :
@@ -62,15 +56,20 @@ public class FeedbackServlet extends HttpServlet {
                 request.getRequestDispatcher("editFeedBack.jsp").forward(request, response);
                 break;
             case "update" :
-                final Feedback fb = dao.getFeedbackById(getId(request));
+                final Feedback fb = controller.getById(getId(request));
                 request.setAttribute("fb", fb);
                 request.getRequestDispatcher("editFeedBack.jsp").forward(request, response);
                 break;
             case "all" :
             default:
-                request.setAttribute("feedbacks", dao.getAllFeedback());
+                request.setAttribute("feedbacks", controller.getAll());
                 request.getRequestDispatcher("feedback.jsp").forward(request, response);
         }
+    }
+
+    @Override
+    public void destroy() {
+        context.close();
     }
 
     private int getId(HttpServletRequest request) {
